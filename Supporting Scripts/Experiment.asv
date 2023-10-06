@@ -1,0 +1,15 @@
+% Function called by main.m
+% Role of function is to run the experiment, start to finish 
+% Parameters: parameters (Things to be used for the experiment)
+% Return Values: None
+
+function Experiment(parameters)
+
+    % Carry out the Introduction to the task
+    if parameters.trial.show_intro
+        Introduction(parameters.screen,parameters.target, parameters.cross, parameters.player);
+    end
+
+
+    for tria
+end

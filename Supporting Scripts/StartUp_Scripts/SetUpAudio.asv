@@ -1,0 +1,16 @@
+% Function called by StartUp.m
+% Role of function is to initialize PsychAudio and set up the audio handle for the experiment 
+% Parameters: None
+% Return Values: Audio Handle
+
+function audio_handle = SetUpAudio()
+    % Initialize
+    InitializePsychAudio();
+
+    % Create the handle
+    audio_handle = PsychPortAudio('Open');
+
+    % Set a few other aduio settings
+    PsychPortAudio('Volume', audio_handle, 1); % Ensure PTB Volume matches that of Speaker
+    PsychPortAudio('Verbosity',0); % Turn off warnings to prevent useless output.
+end

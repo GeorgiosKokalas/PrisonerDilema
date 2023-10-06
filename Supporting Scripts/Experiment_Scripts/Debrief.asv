@@ -1,0 +1,9 @@
+% Function called by: Experiment.m
+% Role of function is to debrief the participant after finishing
+% Parameters: screen (screen parameters
+% Return Values: None
+
+function Debrief()
+    
+end
+
