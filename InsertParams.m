@@ -27,11 +27,11 @@ function in_pars = InsertParams()
     in_pars.screen.window_height = 0;              % Integer - Determines the Height of the window. 0 will make the program FullScreen 
     in_pars.screen.window_width = 0;               % Integer - Determines the Width of the window. 0 will make the program FullScreen
     in_pars.screen.default_text_size = 40;         % Integer - Determines the default text size
-    in_pars.screen.score_text_size = 70;           % Integer - Determines the font of the text size announcing the total score
+    in_pars.screen.score_text_size = 50;           % Integer - Determines the font of the text size announcing the total score
 
 
     %in_pars.target - Determines the parameters of the targets
-    in_pars.target.radius = 50;                           % Integer - The radius of the targets
+    in_pars.target.radius = 200;                           % Integer - The radius of the targets
 
     %in_pars.cross - Determines the parameters for the cross (best left alone)
     in_pars.cross.color = color_list.white;         % RGBA - Determines the color of the cross
@@ -39,14 +39,14 @@ function in_pars = InsertParams()
     in_pars.cross.width = 30;                       % Positive Integer - Determines the thickness of the cross lines
 
     %in_pars.player - Determines the parameters of the player
-    in_pars.player.radius = 10;                          % Positive Number - Determines the radius of the player
+    in_pars.player.radius = 30;                          % Positive Number - Determines the radius of the player
     in_pars.player.color = color_list.green;             % RGBA - Determines the color of the player
     in_pars.player.speed_percent = 500;                  % Percentage - Determines how fast the player will be. 100 is normal 
-    in_pars.player.start_pos = ["center", "bottom"];     % Vector of 2 strings: 1st argument is position on x-axis, 2nd is position on y-axis
+    in_pars.player.start_pos = ["center", "center"];     % Vector of 2 strings: 1st argument is position on x-axis, 2nd is position on y-axis
 
 
     %in_pars.trial - Variables that will affect the experiment as a whole
-    in_pars.trial.num_trials = 10;                      % Natural Number - Determines the amount of trials that will run
+    in_pars.trial.num_trials = 100;                      % Natural Number - Determines the amount of trials that will run
     in_pars.trial.duration_s = 60;                       % Natural Number - Determines the duration of each trial
     in_pars.trial.output_dir = "dummy_dir";              % String - The name of the directory in which the output will be stored.
     in_pars.trial.show_intro = true;                     % Logical - Whether or not we want to show the intro to the player

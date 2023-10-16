@@ -12,11 +12,15 @@ function score_table = Experiment(parameters)
     
     score = 0;
     score_table = zeros(1,parameters.trial.num_trials);
+    
+    %The CPU assumes the player is cooperative
+    pl_coop = true;
+
     for trial_idx = 1:parameters.trial.num_trials
-        score = RunTrial(parameters, trial_idx, sum(score_table), score);
+        [score, pl_coop] = RunTrial(parameters, trial_idx, sum(score_table), score, pl_coop);
         score_table(trial_idx) = score;
     end
 
-    Debrief(parameters.screen);
+    Debrief(parameters.screen, sum(score_table));
 
 end

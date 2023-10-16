@@ -10,22 +10,22 @@ function Introduction(screen_pars, cross_pars, player_pars)
     % Load the colors
     load('colors.mat','color_list');
 
-    % Create the Introductory Message for the Cross 
-    % Draw the message
-    cross_message = ['In this experiment, when you see the cross below, you need to wait and focus on the cross.\n', ...
-        'It signals an intermediate stage to allow you to prepare for each trial of this experiment.\n', ...
-        'Also every trial stage will be signaled by a characteristic beep, like the one next.\n', ...
-        'Please press any key to proceed.'];
-    DrawFormattedText(screen_pars.window, cross_message, 'center', screen_pars.center(2)-cross_pars.width-130, color_list.white);
-    
-    % Draw the cross
-    Screen('DrawLines', screen_pars.window, cross_pars.coords, cross_pars.thickness, cross_pars.color, screen_pars.center);
-    
-    % Update the screen
-    Screen('Flip',screen_pars.window);
-    
-    % Wait for player input
-    KbStrokeWait();
+    % % Create the Introductory Message for the Cross 
+    % % Draw the message
+    % cross_message = ['In this experiment, when you see the cross below, you need to wait and focus on the cross.\n', ...
+    %     'It signals an intermediate stage to allow you to prepare for each trial of this experiment.\n', ...
+    %     'Also every trial stage will be signaled by a characteristic beep, like the one next.\n', ...
+    %     'Please press any key to proceed.'];
+    % DrawFormattedText(screen_pars.window, cross_message, 'center', screen_pars.center(2)-cross_pars.width-130, color_list.white);
+    % 
+    % % Draw the cross
+    % Screen('DrawLines', screen_pars.window, cross_pars.coords, cross_pars.thickness, cross_pars.color, screen_pars.center);
+    % 
+    % % Update the screen
+    % Screen('Flip',screen_pars.window);
+    % 
+    % % Wait for player input
+    % KbStrokeWait();
 
 
     % Create the Introductory Message for the Target

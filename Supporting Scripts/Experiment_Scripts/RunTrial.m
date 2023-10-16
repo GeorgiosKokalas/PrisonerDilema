@@ -5,9 +5,12 @@
 %   - trial_idx (the index of the current trial)
 %   - score_total (the total score so far)
 %   - prev_score (the most recent score)
-% Return Values: None
+%   - prev_pl_coop (whether or not the player previously cooperated)
+% Return Values: 
+%   - score (the score the player just earned)
+%   - pl_coop (whether or not the player cooperated)
 
-function score = RunTrial(parameters, trial_idx, score_total, prev_score)
+function [score, pl_coop] = RunTrial(parameters, trial_idx, score_total, prev_score, prev_pl_coop)
     trial_name = append("/trial", int2str(trial_idx));
     trial_dir = append(parameters.trial.output_dir, trial_name);
     mkdir(trial_dir);
@@ -15,43 +18,41 @@ function score = RunTrial(parameters, trial_idx, score_total, prev_score)
 
     % PRE STAGE - Before the timer of the activity starts
     % Draw the cross for the person to prepare
-    Screen('DrawLines', parameters.screen.window, parameters.cross.coords, ...
-        parameters.cross.thickness, parameters.cross.color, parameters.screen.center);
+    % Screen('DrawLines', parameters.screen.window, parameters.cross.coords, ...
+    %     parameters.cross.thickness, parameters.cross.color, parameters.screen.center);
     
     Screen('TextSize', parameters.screen.window, parameters.screen.default_text_size);
-    cross_message =['Just Scored: ', num2str(prev_score)];
-    DrawFormattedText(parameters.screen.window, cross_message, 'center',...
-        parameters.screen.center(2) - parameters.cross.width+130, color_list.white);
+    cross_message =['Score: ', num2str(prev_score)];
+    DrawFormattedText(parameters.screen.window, cross_message, 'center', 'center', color_list.white);
     
     Screen('TextSize', parameters.screen.window, parameters.screen.score_text_size);
-    score_total_msg = num2str(score_total);
-    DrawFormattedText(parameters.screen.window, score_total_msg, parameters.screen.window_width-150,...
-        70, color_list.white);
+    score_total_msg = ['Total Score: ', num2str(score_total)];
+    DrawFormattedText(parameters.screen.window, score_total_msg, 20, 50, [200, 200, 200, 255]);
 
     Screen('Flip', parameters.screen.window);
 
-    % Wait a bit
-    pause(2.75);
-
-    % Erase the score
-    Screen('DrawLines', parameters.screen.window, parameters.cross.coords, ...
-        parameters.cross.thickness, parameters.cross.color, parameters.screen.center);
+    % % Wait a bit
+    % pause(2.75);
+    % 
+    % % Erase the score
+    % Screen('DrawLines', parameters.screen.window, parameters.cross.coords, ...
+    %     parameters.cross.thickness, parameters.cross.color, parameters.screen.center);
     
-    Screen('Flip', parameters.screen.window);
-    pause(0.25);
+    % Screen('Flip', parameters.screen.window);
+    pause(2);
 
 
     % Generate the positions of all the targets
     num_targets = 2;
     targets = repmat(struct('cooperative', false,'color', [], 'position', [], 'radius', 0, 'angle', 0, 'rect', []), num_targets, 1); 
 
-    %Create the center all targets will be dependent on
-    center_point = [parameters.screen.window_width / 2, ...
-        parameters.screen.window_height - parameters.target.radius - 10];
-    
-    % Choose the target distance so targets are within screen (dependent on height OR width)  
-    center_target_distance = min(parameters.screen.window_width / 2 - max(parameters.target.radius) - 10, ...
-        parameters.screen.window_height - 2*parameters.target.radius + 10);
+    % %Create the center all targets will be dependent on
+    % center_point = [parameters.screen.window_width / 2, ...
+    %     parameters.screen.window_height - parameters.target.radius - 10];
+    % 
+    % % Choose the target distance so targets are within screen (dependent on height OR width)  
+    % center_target_distance = min(parameters.screen.window_width / 2 - max(parameters.target.radius) - 10, ...
+    %     parameters.screen.window_height - 2*parameters.target.radius + 10);
 
     % Find the main increment for the angle
     angles = [45, 135];  % If the num_targets was odd, it's even now, thanks to the decrement
@@ -59,8 +60,9 @@ function score = RunTrial(parameters, trial_idx, score_total, prev_score)
     for target_idx = 1:num_targets
         targets(target_idx).angle = angles(target_idx);
         targets(target_idx).radius = parameters.target.radius;
-        targets(target_idx).position = [round((cosd(angles(target_idx)) * center_target_distance) + center_point(1)), ...
-            round(center_point(2) - (sind(angles(target_idx)) * center_target_distance))];
+        % targets(target_idx).position = [round((cosd(angles(target_idx)) * center_target_distance) + center_point(1)), ...
+        %     round(center_point(2) - (sind(angles(target_idx)) * center_target_distance))];
+        targets(target_idx).position = [parameters.screen.window_width*(target_idx/2 - 0.25), parameters.screen.window_height/2];
         targets(target_idx).rect = [targets(target_idx).position(1) - targets(target_idx).radius, ...
             targets(target_idx).position(2) - targets(target_idx).radius, ...
             targets(target_idx).position(1) + targets(target_idx).radius, ...
@@ -79,11 +81,13 @@ function score = RunTrial(parameters, trial_idx, score_total, prev_score)
     score = 0;
 
     % See if the computer cooperates or not
-    cpu_coop = false;   % Cooperation value of the CPU (computer)
+    % cpu_coop = false;   % Cooperation value of the CPU (computer)
     pl_coop = -1;    % Cooperation value of the player
-    if rand() < 0.5     % 50-50 chance for the computer to cooperate
-        cpu_coop = true;
-    end
+    % if rand() < 0.5     % 50-50 chance for the computer to cooperate
+    %     cpu_coop = true;
+    % end
+    cpu_coop = prev_pl_coop;
+    clear prev_pl_coop;
     
     disp(['Trial ', num2str(trial_idx)]);
     disp(['Does the cpu cooperate? ', num2str(cpu_coop)]);
@@ -115,8 +119,7 @@ function score = RunTrial(parameters, trial_idx, score_total, prev_score)
         end
 
         % Draw the score again
-        DrawFormattedText(parameters.screen.window, score_total_msg, parameters.screen.window_width-150,...
-            70, color_list.white);
+    DrawFormattedText(parameters.screen.window, score_total_msg, 20, 50, [200, 200, 200, 255]);
 
         % Draw the playable character in the new position
         Screen('FillOval', parameters.screen.window, parameters.player.color, player_rect);
