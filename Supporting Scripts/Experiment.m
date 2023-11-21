@@ -15,11 +15,17 @@ function score_table = Experiment(parameters)
     
     %The CPU assumes the player is cooperative
     pl_coop = true;
-
+    
+    results = [];
     for trial_idx = 1:parameters.trial.num_trials
-        [score, pl_coop] = RunTrial(parameters, trial_idx, sum(score_table), score, pl_coop);
+        [score, pl_coop, outcome] = RunTrial(parameters, trial_idx, sum(score_table), score, pl_coop);
         score_table(trial_idx) = score;
+        results = [results; outcome];
     end
+    directory = pwd();
+    cd(parameters.trial.output_dir);
+    save("results.mat", "results");
+    cd(directory);
 
     Debrief(parameters.screen, sum(score_table));
 

@@ -48,7 +48,7 @@ function in_pars = InsertParams()
     %in_pars.trial - Variables that will affect the experiment as a whole
     in_pars.trial.num_trials = 100;                      % Natural Number - Determines the amount of trials that will run
     in_pars.trial.duration_s = 60;                       % Natural Number - Determines the duration of each trial
-    in_pars.trial.output_dir = "dummy_dir";              % String - The name of the directory in which the output will be stored.
+    in_pars.trial.output_dir = "LM";                  % String - The name of the directory in which the output will be stored.
     in_pars.trial.show_intro = true;                     % Logical - Whether or not we want to show the intro to the player
 
     in_pars = ValidateInsertParams(in_pars);

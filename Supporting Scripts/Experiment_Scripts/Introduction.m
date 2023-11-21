@@ -29,7 +29,10 @@ function Introduction(screen_pars, cross_pars, player_pars)
 
 
     % Create the Introductory Message for the Target
-    target_message_1 = 'In this experiment, you will see a few circles that you have to select.\nThey look like this:';
+    target_message_1 = ['You will need to either cooperate (choose blue) or work against (choose red) the CPU.\n' ...
+        'Cooperating will net you 3 points, if the CPU cooperates, but 0 points if it does not.\n' ...
+        'Not cooperating will net you 5 points if the CPU cooperates, but only 1 if the CPU does not\n' ...
+        'This is how the choices look: blue is cooperation, red is betrayal.'];
     target_message_2 = 'Press any key to proceed';
     circle_coords1 = [screen_pars.window_width/2 - 120, ...      % Left-Top Edge X: Middle of screen - radius (40)
         screen_pars.window_height/2 + 40, ...                  % Left-Top Edge Y: Middle of screen - radius (40) + Offset for text
@@ -42,7 +45,7 @@ function Introduction(screen_pars, cross_pars, player_pars)
         screen_pars.window_height/2 + 120];                    % Right-Bottom Y: Middle of screen + radius (40) + Offset for text 
     
     % Present 2 texts (above and below the circle)
-    DrawFormattedText(screen_pars.window, target_message_1, 'center', 'center', color_list.white);
+    DrawFormattedText(screen_pars.window, target_message_1, 'center', screen_pars.center(2)-100, color_list.white);
     DrawFormattedText(screen_pars.window, target_message_2, 'center', screen_pars.center(2)+180, color_list.white);
     
     % Draw the targets

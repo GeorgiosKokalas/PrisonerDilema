@@ -10,10 +10,10 @@
 %   - score (the score the player just earned)
 %   - pl_coop (whether or not the player cooperated)
 
-function [score, pl_coop] = RunTrial(parameters, trial_idx, score_total, prev_score, prev_pl_coop)
-    trial_name = append("/trial", int2str(trial_idx));
-    trial_dir = append(parameters.trial.output_dir, trial_name);
-    mkdir(trial_dir);
+function [score, pl_coop, outcome] = RunTrial(parameters, trial_idx, score_total, prev_score, prev_pl_coop)
+    % trial_name = append("/trial", int2str(trial_idx));
+    % trial_dir = append(parameters.trial.output_dir, trial_name);
+    % mkdir(trial_dir);
     load('colors.mat','color_list');
 
     % PRE STAGE - Before the timer of the activity starts
@@ -148,6 +148,9 @@ function [score, pl_coop] = RunTrial(parameters, trial_idx, score_total, prev_sc
     elseif ~pl_coop && ~cpu_coop
         score = 1;
     end
+
+    outcome = struct('player_cooperated', pl_coop, 'cpu_cooperated', cpu_coop, 'time', elapsed_time,...
+        'trial_score', score, 'total_score', score_total + score);
     
     % Reset font size to its default
     Screen('TextSize', parameters.screen.window, parameters.screen.default_text_size);
