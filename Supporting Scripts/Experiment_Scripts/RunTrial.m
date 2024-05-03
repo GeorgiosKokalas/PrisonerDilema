@@ -4,60 +4,46 @@
 %   - parameters (Things to be used for the experiment)
 %   - trial_idx (the index of the current trial)
 %   - score_total (the total score so far)
-%   - prev_score (the most recent score)
-%   - prev_pl_coop (whether or not the player previously cooperated)
+%   - cpu (the handle to the cpu player)
+%   - type (the type of trial [prison or hunt])
+%   - layout (the layout type for the options)
 % Return Values: 
 %   - score (the score the player just earned)
 %   - pl_coop (whether or not the player cooperated)
 
-function [score, pl_coop, outcome] = RunTrial(parameters, trial_idx, score_total, prev_score, prev_pl_coop)
-    % trial_name = append("/trial", int2str(trial_idx));
-    % trial_dir = append(parameters.trial.output_dir, trial_name);
-    % mkdir(trial_dir);
+function [score, outcome] = RunTrial(parameters, trial_idx, score_total, cpu, type, layout)
     load('colors.mat','color_list');
 
     % PRE STAGE - Before the timer of the activity starts
-    % Draw the cross for the person to prepare
-    % Screen('DrawLines', parameters.screen.window, parameters.cross.coords, ...
-    %     parameters.cross.thickness, parameters.cross.color, parameters.screen.center);
-    
-    Screen('TextSize', parameters.screen.window, parameters.screen.default_text_size);
-    cross_message =['Score: ', num2str(prev_score)];
-    DrawFormattedText(parameters.screen.window, cross_message, 'center', 'center', color_list.white);
-    
-    Screen('TextSize', parameters.screen.window, parameters.screen.score_text_size);
-    score_total_msg = ['Total Score: ', num2str(score_total)];
-    DrawFormattedText(parameters.screen.window, score_total_msg, 20, 50, [200, 200, 200, 255]);
-
-    Screen('Flip', parameters.screen.window);
-
-    % % Wait a bit
-    % pause(2.75);
-    % 
-    % % Erase the score
-    % Screen('DrawLines', parameters.screen.window, parameters.cross.coords, ...
-    %     parameters.cross.thickness, parameters.cross.color, parameters.screen.center);
-    
-    % Screen('Flip', parameters.screen.window);
-    pause(2);
-
-
     % Generate the positions of all the targets
     num_targets = 2;
+    score_total_msg_prior = ['Task Total Score: ', num2str(score_total)];
     targets = repmat(struct('cooperative', false,'color', [], 'position', [], 'radius', 0, 'angle', 0, 'rect', []), num_targets, 1); 
-
-    % %Create the center all targets will be dependent on
-    % center_point = [parameters.screen.window_width / 2, ...
-    %     parameters.screen.window_height - parameters.target.radius - 10];
-    % 
-    % % Choose the target distance so targets are within screen (dependent on height OR width)  
-    % center_target_distance = min(parameters.screen.window_width / 2 - max(parameters.target.radius) - 10, ...
-    %     parameters.screen.window_height - 2*parameters.target.radius + 10);
 
     % Find the main increment for the angle
     angles = [45, 135];  % If the num_targets was odd, it's even now, thanks to the decrement
+
+    % Create some sources base on the type of experiment
+        % source_text is what each circle has in it 
+        % source_color is the color of the circle
+        % source_scores is the list of available scoresdd
+    [source_text, source_colors, source_title] = deal(NaN);
+    if strcmpi(parameters.types.prison, type)
+        source_text = ["Cooperate", "Defect"];
+        source_colors = [parameters.target.prison.cooperate; parameters.target.prison.defect];
+        source_title = 'Prisoner Task';
+    elseif strcmpi(parameters.types.hunt, type)
+        source_text = ["Stag", "Rabbit"];
+        source_colors = [parameters.target.hunt.stag; parameters.target.hunt.rabbit];
+        source_title = 'Hunting Trip';
+    end
+    
+    % A list of all behavioral options; you either cooperate or not
+    source_cooperative = [true, false];
+
     % current_angle = base_angle;
     for target_idx = 1:num_targets
+        % create the placement of each target
         targets(target_idx).angle = angles(target_idx);
         targets(target_idx).radius = parameters.target.radius;
         % targets(target_idx).position = [round((cosd(angles(target_idx)) * center_target_distance) + center_point(1)), ...
@@ -68,28 +54,33 @@ function [score, pl_coop, outcome] = RunTrial(parameters, trial_idx, score_total
             targets(target_idx).position(1) + targets(target_idx).radius, ...
             targets(target_idx).position(2) + targets(target_idx).radius];
         
-        if target_idx == 1 
-            targets(target_idx).color = color_list.blue;
-            targets(target_idx).cooperative = true;
-        else
-            targets(target_idx).color = color_list.red;
-            targets(target_idx).cooperative = false;
-        end
+        % Based on the layout, you select the items from the source lists in different order    
+        layout_selection = NaN;
+        if layout == 1                      % First layout is following the flow    
+            layout_selection = target_idx;
+        elseif layout == 2                  % Seconf layout attempts to go in reverse
+            layout_selection = num_targets-target_idx + 1;
+        end 
+        
+        % Put in the type of text that we need using the correct source text and the correct layout order    
+        targets(target_idx).text = char(source_text(layout_selection));
+        text_length = length(targets(target_idx).text)*25;
+        targets(target_idx).text_sx = targets(target_idx).position(1) - floor(text_length/2);
+        targets(target_idx).text_sy = targets(target_idx).position(2)+10;
+        
+        % Using the correct layout order put in cooperative values and the 
+        targets(target_idx).color = source_colors(layout_selection, :);
+        targets(target_idx).cooperative = source_cooperative(layout_selection);
     end
     
-    % Measure the Dilema
+    % Measure the Dilema's outcomes
     score = 0;
 
     % See if the computer cooperates or not
-    % cpu_coop = false;   % Cooperation value of the CPU (computer)
     pl_coop = -1;    % Cooperation value of the player
-    % if rand() < 0.5     % 50-50 chance for the computer to cooperate
-    %     cpu_coop = true;
-    % end
-    cpu_coop = prev_pl_coop;
-    clear prev_pl_coop;
+    cpu_coop = cpu.getResponce();
     
-    disp(['Trial ', num2str(trial_idx)]);
+    disp([source_title, ' ' , num2str(trial_idx)]);
     disp(['Does the cpu cooperate? ', num2str(cpu_coop)]);
     disp('   1 = Yes, 0 = No');
 
@@ -101,6 +92,14 @@ function [score, pl_coop, outcome] = RunTrial(parameters, trial_idx, score_total
     %     parameters.screen.window_height - parameters.player.radius - 20];
     % LOOP STAGE
     while elapsed_time < parameters.trial.duration_s
+        % Print the name of the task
+        Screen('TextSize', parameters.screen.window, 70);
+        DrawFormattedText(parameters.screen.window, source_title, 'center');
+        Screen('TextSize', parameters.screen.window, parameters.screen.default_text_size);
+        
+        % Print the total score
+        DrawFormattedText(parameters.screen.window, score_total_msg_prior, 'center', 120, [200, 200, 200, 255]);
+        
         % Calculate the player movements
         [parameters.player.pos, player_rect] = MovePlayer(parameters.player.pos, parameters.player.speed, ...
             parameters.player.radius, parameters.screen.window_dims);
@@ -116,10 +115,9 @@ function [score, pl_coop, outcome] = RunTrial(parameters, trial_idx, score_total
         % Draw all the targets
         for target_idx=1:length(targets)
             Screen('FillOval', parameters.screen.window, targets(target_idx).color, targets(target_idx).rect);
+            DrawFormattedText(parameters.screen.window,targets(target_idx).text,...
+                targets(target_idx).text_sx ,targets(target_idx).text_sy, 252:255);
         end
-
-        % Draw the score again
-    DrawFormattedText(parameters.screen.window, score_total_msg, 20, 50, [200, 200, 200, 255]);
 
         % Draw the playable character in the new position
         Screen('FillOval', parameters.screen.window, parameters.player.color, player_rect);
@@ -138,21 +136,38 @@ function [score, pl_coop, outcome] = RunTrial(parameters, trial_idx, score_total
     
     pl_coop = logical(pl_coop);   % Make the decisions logical/boolean values
     % If they both cooperated, give 3
-    % If only the second cooperated, give 5
-    % If only the first cooperated, keep 0
+    % If only the cpu cooperated, give 5
+    % If only the player cooperated, give 0
     % If both defected, give 1
     if pl_coop && cpu_coop
-        score = 3;
+        score = parameters.scores.(type).cc;
     elseif ~pl_coop && cpu_coop
-        score = 5;
+        score = parameters.scores.(type).dc;
     elseif ~pl_coop && ~cpu_coop
-        score = 1;
+        score = parameters.scores.(type).dd;
+    elseif pl_coop && ~cpu_coop
+        score = parameters.scores.(type).cd;
     end
+
+
+    % Let the participant know what they scored 
+    Screen('TextSize', parameters.screen.window, parameters.screen.default_text_size);
+    cross_message =['You just scored: ', num2str(score), ' points!'];
+    DrawFormattedText(parameters.screen.window, cross_message, 'center', 'center', color_list.white);
+    Screen('Flip', parameters.screen.window);
+    pause(2);
+    
+    % Let the participant know what their total score is
+    Screen('TextSize', parameters.screen.window, parameters.screen.default_text_size);
+    score_total_msg_after = [source_title, ' total score: ', num2str(score_total + score)];
+    DrawFormattedText(parameters.screen.window, score_total_msg_after, 'center', 'center', color_list.white);
+
+    Screen('Flip', parameters.screen.window);
+    pause(2);
+
+    cpu.changeBehavior(pl_coop);
 
     outcome = struct('player_cooperated', pl_coop, 'cpu_cooperated', cpu_coop, 'time', elapsed_time,...
         'trial_score', score, 'total_score', score_total + score);
-    
-    % Reset font size to its default
-    Screen('TextSize', parameters.screen.window, parameters.screen.default_text_size);
 end
 

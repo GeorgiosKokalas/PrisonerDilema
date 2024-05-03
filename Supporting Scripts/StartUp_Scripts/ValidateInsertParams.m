@@ -79,6 +79,30 @@ function in_pars = ValidateInsertParams(in_pars)
         in_pars.target.radius = 80;
     end
 
+    %Evaluating prison.cooperate (must be an rgba value)
+    if ~isrgba(in_pars.target.prison.cooperate)
+        disp("Inoperable value provided for in_pars.target.prison.cooperate. Applying default...");
+        in_pars.target.prison.cooperate = color_list.blue;
+    end
+
+    %Evaluating prison.defect (must be an rgba value)
+    if ~isrgba(in_pars.target.prison.defect)
+        disp("Inoperable value provided for in_pars.target.prison.defect. Applying default...");
+        in_pars.target.prison.defect = color_list.red;
+    end
+
+    %Evaluating hunt.stag (must be an rgba value)
+    if ~isrgba(in_pars.target.hunt.stag)
+        disp("Inoperable value provided for in_pars.target.hunt.stag. Applying default...");
+        in_pars.target.hunt.stag = color_list.green;
+    end
+
+    %Evaluating hunt.rabbit (must be an rgba value)
+    if ~isrgba(in_pars.target.hunt.rabbit)
+        disp("Inoperable value provided for in_pars.target.hunt.rabbit. Applying default...");
+        in_pars.target.hunt.rabbit = color_list.purple;
+    end
+
     
     % Extra values for in_pars.player
     in_pars.player.speed = 0;

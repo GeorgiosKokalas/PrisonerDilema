@@ -4,7 +4,7 @@
 % Return Values: None
 
 function ShutDown(parameters)
-    PsychPortAudio('Close', parameters.audio.handle);
+    % PsychPortAudio('Close', parameters.audio.handle);
     close all;
 end
 

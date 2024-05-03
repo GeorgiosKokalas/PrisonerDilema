@@ -18,7 +18,7 @@ function parameters = StartUp()
     parameters.screen = SetUpScreen(parameters.screen);
 
     % Initialize the Sound
-    parameters.audio = struct;
-    parameters.audio = SetUpAudio(parameters.audio);
+    % parameters.audio = struct;
+    % parameters.audio = SetUpAudio(parameters.audio);
 
 end

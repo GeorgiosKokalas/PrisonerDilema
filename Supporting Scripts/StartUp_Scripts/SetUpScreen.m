@@ -18,7 +18,7 @@ function screen_pars = SetUpScreen(screen_pars)
         [screen_pars.start_point, screen_pars.window_dims]);
 
     %Set up text Preferences
-    Screen('TextFont', screen_pars.window, 'Ariel');
+    Screen('TextFont', screen_pars.window, screen_pars.default_text_font);
     Screen('TextSize', screen_pars.window, screen_pars.default_text_size);
 end
 
