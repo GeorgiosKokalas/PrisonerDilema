@@ -16,14 +16,16 @@ function Introduction(screen_pars, player_pars, score_pars, target_pars)
                         'You have to choose between 2 given options at a time, represented as big coloured circles.\n',...
                         'This experiments includes 2 tasks, which you will alternate back and forth for:\n',...
                         'A Prisoner Task, and a Hunting Trip Task. You will be given more directions about each one.\n\n\n',...
-                        'Press any key on the keyboard to proceed.'];
+                        'Press any key to proceed.'];
     DrawFormattedText(screen_pars.window, greeting_message, 'center', screen_pars.center(2)-150, color_list.white);
 
     % Update the Screen
     Screen('Flip',screen_pars.window);
 
     % Wait for player input
-    KbStrokeWait();
+    % KbStrokeWait();
+    while ~KbCheck() && ~GetXBox().AnyButton; end
+     WaitSecs(0.5);
 
     % Create the text explaining each task.
     explanation_text = ...
@@ -82,7 +84,9 @@ function Introduction(screen_pars, player_pars, score_pars, target_pars)
         Screen('Flip',screen_pars.window);
 
         % Wait for player input
-        KbStrokeWait();
+        % KbStrokeWait();
+        while ~KbCheck() && ~GetXBox().AnyButton; end
+        WaitSecs(0.5);
     end
 
     
@@ -92,10 +96,10 @@ function Introduction(screen_pars, player_pars, score_pars, target_pars)
     player_pos = screen_pars.center;
 
     % Loops as longs as the player doesn't press any keyboard buttons
-    while ~KbCheck
+    while ~KbCheck() && ~GetXBox().AnyButton
         % Draw out the messages 
         player_message_1 = 'This is you. Feel free to move around to get used to the controls.';
-        player_message_2 = 'Press any button on the keyboard once you are ready.';
+        player_message_2 = 'Press any key once you are ready.';
         DrawFormattedText(screen_pars.window, player_message_1, 'center', screen_pars.center(2)-player_pars.radius-20, color_list.white);
         DrawFormattedText(screen_pars.window, player_message_2, 'center', screen_pars.center(2)+player_pars.radius+50, color_list.white);
         
@@ -107,5 +111,6 @@ function Introduction(screen_pars, player_pars, score_pars, target_pars)
         % Update the Screen
         Screen('Flip', screen_pars.window);
     end
+    WaitSecs(0.5);
 end
 

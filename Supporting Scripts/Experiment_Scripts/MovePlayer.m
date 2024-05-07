@@ -14,13 +14,16 @@
 function [end_pos, player_rect] = MovePlayer(start_pos, speed, radius, win_dims)
     %---jst is not written by me, it was the only script I found that could successfully get gamepad input---%
     %don't amplitfy small movements
-    joystick = jst;
-    joystick(abs(joystick) < 0.05) = 0;
+    % joystick = jst;
+    % joystick(abs(joystick) < 0.05) = 0;
+    joystick = GetXBox().LMovement;
         
     % Calculate the new Position based on the previous one and the joystick movement
-    end_pos = start_pos;
-    end_pos(1) = floor(start_pos(1) + joystick(2) * speed);
-    end_pos(2) = floor(start_pos(2) + joystick(1) * speed);
+    % end_pos, start_pos and joystick are vectors of 2
+    end_pos = floor(start_pos + joystick*speed);
+    % end_pos = start_pos;
+    % end_pos(1) = floor(start_pos(1) + joystick(2) * speed);
+    % end_pos(2) = floor(start_pos(2) + joystick(1) * speed);
 
     % Check if the player is going out of bounds
     for idx = 1:numel(end_pos)

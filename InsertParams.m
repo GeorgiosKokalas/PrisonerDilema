@@ -1,4 +1,4 @@
-% Function called by: StartUp.m
+ % Function called by: StartUp.m
 % Role of function is to generate all user-inserted parameters
 % Parameters: None
 % Return Values: in_pars (struct that contains all inserted parameters)
@@ -52,7 +52,7 @@ function in_pars = InsertParams()
 
 
     %in_pars.trial - Variables that will affect the experiment as a whole
-    in_pars.trial.num_trials = 5;                      % Natural Number - Determines the amount of trials that will run
+    in_pars.trial.num_trials = 0;                      % Natural Number - Determines the amount of trials that will run
     in_pars.trial.duration_s = 1200;                    % Natural Number - Determines the duration of each trial
     in_pars.trial.output_dir = "Trial";                 % String - The name of the directory in which the output will be stored.
     in_pars.trial.show_intro = true;                    % Logical - Whether or not we want to show the intro to the player
